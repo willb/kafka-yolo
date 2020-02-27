@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Messages</title>
+
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
+</head>
+<body>
+<div class="container">
+
+    <h2>Last message</h2>
+    <div class="row">
+        <p class="col-md-12">The last prediction is <strong><span id="predict">N/A</span></strong>.</p>
+        <p class="col-md-12"><div id="pimage"></div></p>
+    </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    var source = new EventSource("/messages/stream");
+
+    function displayBase64Image(placeholder, base64Image) {
+        placeholder.html('');
+        $('<img>', {
+            src: base64Image
+        }).appendTo(placeholder);
+    }
+
+    source.onmessage = function (event) {
+        message = JSON.parse(event.data);
+        document.getElementById("predict").innerHTML = JSON.stringify(message.predictions);
+        document.getElementById("pimage").innerHTML = '<img src="data:image/jpeg;base64,' + message.image + '"/>';
+    };
+</script>
+</html>
